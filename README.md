@@ -75,6 +75,10 @@ local result = client:email_verifier('b.mohamed@tomba.io')
 print(result)
 ```
 
+## Examples
+
+Sample codes under **examples/** folder.
+
 ## Documentation
 
 See the [official documentation](https://developer.tomba.io/).
