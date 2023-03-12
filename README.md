@@ -25,7 +25,7 @@ The free plan is limited to 25 search request and 50 verification a month,  To e
 
 ## Installation
 
-install via [luarocks](https://luarocks.org)
+install via [luarocks](https://luarocks.org/modules/benemohamed/tomba)
 
 ```bash
 luarocks install tomba
