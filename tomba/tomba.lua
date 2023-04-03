@@ -1,6 +1,6 @@
 -- @author    Mohamed Ben rebia <b.mohamed@tomba.io>
 -- @copyright Apache-2.0
--- @release   1.0.0-1
+-- @release   1.0.0-2
 -- @see       https://tomba.io/
 local requests = require('requests')
 
@@ -21,6 +21,14 @@ local LOGS_PATH = "/logs"
 local SEARCH_PATH = "/domain-search"
 -- Finder path
 local FINDER_PATH = "/email-finder"
+-- Finder path
+local FINDER_PATH = "/email-finder"
+-- Enrichment path
+local ENRICHMENT_PATH = "/enrich"
+-- Author path
+local AUTHOR_PATH = "/author-finder"
+-- Linkedin path
+local LINKEDIN_PATH = "/linkedin"
 -- Verifier path
 local VERIFIER_PATH = "/email-verifier"
 -- Email Sources path
@@ -114,6 +122,21 @@ function Tomba:email_finder(domain, fname, lname)
     return self:call(FINDER_PATH, { domain = domain, fisrt_name = fname, last_name= lname })
 end
 
+-- The Enrichment API lets you look up person and company data based on an email, For example, you could retrieve a person’s name, location and social handles from an email
+-- @param email A string The email address to find data, "b.mohamed@tomba.io".
+function Tomba:enrichment(email)
+    return self:call(ENRICHMENT_PATH, { email = email})
+end
+-- This API endpoint generates or retrieves the most likely email address from a blog post url.
+-- @param url A string The URL of the article. For example, "https://clearbit.com/blog/company-name-to-domain-api".
+function Tomba:author_finder(url)
+    return self:call(AUTHOR_PATH, { url = url})
+end
+-- This API endpoint generates or retrieves the most likely email address from a Linkedin URL.
+-- @param url A string The URL of the Linkedin. For example, "https://www.linkedin.com/in/alex-maccaw-ab592978".
+function Tomba:linkedin_finder(url)
+    return self:call(LINKEDIN_PATH, { url = url})
+end
 -- Verify the deliverability of an email address.
 -- @param email A string email address you want to verify.
 function Tomba:email_verifier(email)
