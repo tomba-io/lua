@@ -35,6 +35,9 @@ jobs:
 
       - name: Run tests
         run: busted tests/
+        env:
+          TOMBA_API_KEY: ${{ secrets.TOMBA_API_KEY }}
+          TOMBA_SECRET_KEY: ${{ secrets.TOMBA_SECRET_KEY }}
 
       - name: Upload to LuaRocks
         run: luarocks upload tomba-1.1.0-1.rockspec --api-key "$LUAROCKS_API_KEY"

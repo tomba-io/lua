@@ -24,32 +24,34 @@ local function getenv(name)
     return dotenv[name]
 end
 
--- Test credentials: from env/.env, or dummy values for unit tests
+-- Credentials from env or .env file
 local TEST_KEY = getenv("TOMBA_API_KEY")
 local TEST_SECRET = getenv("TOMBA_SECRET_KEY")
 
--- Whether we have real credentials for integration tests
-local HAS_CREDENTIALS = (getenv("TOMBA_API_KEY") ~= nil)
+-- Whether we have real credentials
+local HAS_CREDENTIALS = (TEST_KEY ~= nil and TEST_SECRET ~= nil)
 
 describe("Tomba SDK", function()
 
     describe("Constructor", function()
 
-        it("should create a client with valid credentials", function()
-            local client = tomba:init(TEST_KEY, TEST_SECRET)
-            assert.are.same(TEST_KEY, client.key)
-            assert.are.same(TEST_SECRET, client.secret)
-        end)
+        if HAS_CREDENTIALS then
+            it("should create a client with valid credentials", function()
+                local client = tomba:init(TEST_KEY, TEST_SECRET)
+                assert.are.same(TEST_KEY, client.key)
+                assert.are.same(TEST_SECRET, client.secret)
+            end)
+        end
 
         it("should error on invalid API key", function()
             assert.has_error(function()
-                tomba:init("ta_xxx", TEST_SECRET)
+                tomba:init("ta_xxx", "ts_00000000-0000-0000-0000-000000000000")
             end, "Invalid Tomba api key")
         end)
 
         it("should error on invalid API secret", function()
             assert.has_error(function()
-                tomba:init(TEST_KEY, "ts_xxxx")
+                tomba:init("ta_00000000000000000000000000000000000000", "ts_xxxx")
             end, "Invalid Tomba api secret")
         end)
 
