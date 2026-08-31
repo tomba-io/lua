@@ -26,16 +26,21 @@ jobs:
 
       - name: Install dependencies
         run: |
-          luarocks install --local luasocket
-          luarocks install --local md5
-          luarocks install --local lua-cjson
-          luarocks install --local busted
-          luarocks install --local --deps-mode none lua-requests
+          sudo luarocks install luasocket
+          sudo luarocks install md5
+          sudo luarocks install lua-cjson
+          sudo luarocks install busted
+          sudo luarocks install --deps-mode none lua-requests
+
+      - name: Patch lua-requests to make xml optional
+        run: |
+          REQUESTS_FILE=$(find /usr/local/share/lua -name "requests.lua" 2>/dev/null | head -1)
+          if [ -n "$REQUESTS_FILE" ]; then
+            sudo sed -i "s/local xml = require('xml')/local ok_xml, xml = pcall(require, 'xml')/" "$REQUESTS_FILE"
+          fi
 
       - name: Run tests
-        run: |
-          eval $(luarocks path --bin)
-          busted tests/
+        run: busted tests/
         env:
           TOMBA_API_KEY: ${{ secrets.TOMBA_API_KEY }}
           TOMBA_SECRET_KEY: ${{ secrets.TOMBA_SECRET_KEY }}
@@ -53,9 +58,7 @@ jobs:
           sudo apt-get install -y lua5.4 liblua5.4-dev luarocks
 
       - name: Install luacheck
-        run: luarocks install --local luacheck
+        run: sudo luarocks install luacheck
 
       - name: Run luacheck
-        run: |
-          eval $(luarocks path --bin)
-          luacheck tomba/ tests/
+        run: luacheck tomba/ tests/
