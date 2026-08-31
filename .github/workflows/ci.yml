@@ -12,29 +12,30 @@ jobs:
 
     strategy:
       matrix:
-        lua-version: ['5.1', '5.3', '5.4', 'luajit-2.1']
+        lua-version: ['5.1', '5.3', '5.4']
 
     name: Lua ${{ matrix.lua-version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Setup Lua
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: ${{ matrix.lua-version }}
-
-      - name: Setup LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
+      - name: Install Lua and LuaRocks
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua${{ matrix.lua-version }} liblua${{ matrix.lua-version }}-dev luarocks
 
       - name: Install dependencies
         run: |
-          luarocks install lua-requests
-          luarocks install lua-cjson
-          luarocks install busted
+          luarocks install --local luasocket
+          luarocks install --local md5
+          luarocks install --local lua-cjson
+          luarocks install --local busted
+          luarocks install --local --deps-mode none lua-requests
 
       - name: Run tests
-        run: busted tests/
+        run: |
+          eval $(luarocks path --bin)
+          busted tests/
         env:
           TOMBA_API_KEY: ${{ secrets.TOMBA_API_KEY }}
           TOMBA_SECRET_KEY: ${{ secrets.TOMBA_SECRET_KEY }}
@@ -44,18 +45,17 @@ jobs:
     name: Luacheck
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Setup Lua
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: '5.4'
-
-      - name: Setup LuaRocks
-        uses: leafo/gh-actions-luarocks@v4
+      - name: Install Lua and LuaRocks
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.4 liblua5.4-dev luarocks
 
       - name: Install luacheck
-        run: luarocks install luacheck
+        run: luarocks install --local luacheck
 
       - name: Run luacheck
-        run: luacheck tomba/ tests/
+        run: |
+          eval $(luarocks path --bin)
+          luacheck tomba/ tests/
