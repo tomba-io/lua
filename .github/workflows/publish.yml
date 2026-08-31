@@ -1,0 +1,36 @@
+name: Publish to LuaRocks
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish to LuaRocks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Lua
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: '5.4'
+
+      - name: Setup LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+
+      - name: Install dependencies
+        run: |
+          luarocks install lua-requests
+          luarocks install lua-cjson
+          luarocks install busted
+
+      - name: Run tests
+        run: busted tests/
+
+      - name: Upload to LuaRocks
+        run: luarocks upload tomba-1.1.0-1.rockspec --api-key "$LUAROCKS_API_KEY"
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}

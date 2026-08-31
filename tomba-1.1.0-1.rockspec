@@ -1,21 +1,29 @@
 rockspec_format = "3.0"
 package = "tomba"
-version = "1.0.0-2"
+version = "1.1.0-1"
 source = {
-   url = "git://github.com/tomba-io/lua.git"
+   url = "git://github.com/tomba-io/lua.git",
+   tag = "v1.1.0"
 }
 description = {
    summary = "Official Lua library for Tomba Email Finder",
    detailed = [[
-     Tomba: Tomba.io is an Email Finder for B2B sales and email marketing
-     This is the Lua client library for the [Email Finder](https://tomba.io) API.
-     It allows you to lookup the following details :
-        -   [Domain Search](https://tomba.io/domain-search) (Search emails are based on the website You give one domain name and it returns all the email addresses found on the internet.)
-        -   [Email Finder](https://tomba.io/email-finder) (This API endpoint generates or retrieves the most likely email address from a domain name, a first name and a last name..)
-        -   [Author Finder](https://tomba.io/author-finder) (Instantly discover the email addresses of article authors.)
-        -   [Enrichment](https://tomba.io/author-finder) (The Enrichment lets you find the current job title, company, location and social profiles of the person behind the email.)
-        -   [Linkedin Finder](https://tomba.io/author-finder) (The Linkedin lets you find the current job title, company, location and social profiles of the person behind the linkedin URL.)
-        -   [Email Verifier](https://tomba.io/email-verifier) (checks the deliverability of a given email address, verifies if it has been found in our database, and returns their sources.)
+     Tomba: Tomba.io is an Email Finder for B2B sales and email marketing.
+     This is the Lua client library for the Tomba Email Finder API (https://tomba.io).
+     It allows you to:
+        -   Domain Search: Search emails based on a website domain.
+        -   Email Finder: Generate the most likely email from a domain, first name and last name.
+        -   Author Finder: Instantly discover email addresses of article authors.
+        -   Enrichment: Find job title, company, location and social profiles from an email.
+        -   Linkedin Finder: Find email addresses from LinkedIn URLs.
+        -   Email Verifier: Check the deliverability of a given email address.
+        -   Phone Finder: Find phone numbers associated with an email or domain.
+        -   Phone Validator: Validate phone numbers and retrieve associated information.
+        -   Companies Search: Search for companies using natural language or structured filters.
+        -   Similar: Find similar domains to a given domain.
+        -   Technology: Discover technologies used by a domain.
+        -   Leads Management: Create, read, update, and delete leads.
+        -   Bulk Operations: Create and manage bulk processing jobs.
    ]],
    homepage = "https://tomba.io/",
    issues_url = "https://github.com/tomba-io/lua/issues",
@@ -25,6 +33,7 @@ description = {
 dependencies = {
    "lua >= 5.1",
    "lua-requests",
+   "lua-cjson",
 }
 build = {
    type    = "builtin",
@@ -54,4 +63,7 @@ build = {
       ["tomba.leads_attributes"] = "tomba/leads_attributes.lua",
       ["tomba.bulk"]            = "tomba/bulk.lua",
    }
+}
+test = {
+   type = "busted",
 }
