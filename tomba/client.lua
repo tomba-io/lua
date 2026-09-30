@@ -3,7 +3,7 @@
 -- Core client module: constants, constructor, and HTTP methods.
 -- @author    Mohamed Ben rebia <b.mohamed@tomba.io>
 -- @copyright Apache-2.0
--- @release   1.1.0
+-- @release   1.1.1
 -- @see       https://tomba.io/
 -- @see       https://docs.tomba.io/
 
@@ -39,7 +39,7 @@ Tomba = {}
 Tomba.__index = Tomba
 
 --- SDK version
-Tomba.VERSION = "1.1.0"
+Tomba.VERSION = "1.1.1"
 
 -- DEFAULT BASE URL
 Tomba.BASE_URL = "https://api.tomba.io/v1"
