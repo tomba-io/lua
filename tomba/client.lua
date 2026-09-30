@@ -162,6 +162,35 @@ function Tomba:call(path, params)
     return { data = json_data, rate_limit = rate_limit }
 end
 
+--- Make a raw GET request to the Tomba API (no JSON decoding).
+-- Returns the response body as a plain string. Useful for endpoints
+-- that return non-JSON data such as CSV downloads.
+-- @param path string API endpoint path.
+-- @param params table Query parameters (optional).
+-- @return table { data = response_body_text, rate_limit = rate_limit }.
+function Tomba:call_raw(path, params)
+    if path == nil then
+        path = ""
+    end
+
+    local endpoint = Tomba.BASE_URL .. path
+    local header = {
+        ["Content-Type"] = "application/json",
+        ["User-Agent"] = "Tomba Lua/client " .. Tomba.VERSION,
+        ["X-Tomba-Key"] = self.key,
+        ["X-Tomba-Secret"] = self.secret,
+    }
+
+    local response = requests.get{endpoint, params = encode_params(params), headers = header, timeout = 120}
+    if response.status_code ~= 200 and response.status_code ~= 201 then
+        error(response.text)
+    end
+
+    local rate_limit = Tomba._parse_rate_limit_headers(response)
+
+    return { data = response.text, rate_limit = rate_limit }
+end
+
 --- Make a POST request to the Tomba API with a JSON body.
 -- @param path string API endpoint path.
 -- @param body table Request body to be encoded as JSON.

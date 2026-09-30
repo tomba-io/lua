@@ -32,6 +32,17 @@ function Tomba:list_bulks(bulk_type, params)
     return self:call("/bulk/" .. bulk_type, params)
 end
 
+--- Create Bulk
+-- Create a new bulk operation.
+-- @param bulk_type string The bulk operation type.
+-- @param data table The bulk operation data.
+-- @return table API response.
+-- @see https://docs.tomba.io/api/bulks
+function Tomba:create_bulk(bulk_type, data)
+    validate_type(bulk_type)
+    return self:post("/bulk/" .. bulk_type, data)
+end
+
 --- Get Bulk
 -- Retrieve details of a specific bulk operation.
 -- @param bulk_type string The bulk operation type.
@@ -107,7 +118,7 @@ end
 -- @see https://docs.tomba.io/api/bulks
 function Tomba:bulk_download(bulk_type, id)
     validate_type(bulk_type)
-    return self:call("/bulk/" .. bulk_type .. "/" .. id .. "/download", nil)
+    return self:call_raw("/bulk/" .. bulk_type .. "/" .. id .. "/download", nil)
 end
 
 return Tomba
