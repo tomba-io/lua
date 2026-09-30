@@ -10,6 +10,31 @@
 local requests = require('requests')
 local json = require('cjson')
 
+--- Percent-encode a string for use in URL query parameter values.
+-- Encodes all characters except unreserved characters (RFC 3986).
+-- @param str string The string to encode.
+-- @return string The percent-encoded string.
+local function url_encode(str)
+    str = string.gsub(tostring(str), "([^%w%-%.%_%~])", function(c)
+        return string.format("%%%02X", string.byte(c))
+    end)
+    return str
+end
+
+--- Encode all values in a query parameter table.
+-- @param params table Query parameters (optional, may be nil).
+-- @return table|nil A new table with percent-encoded values, or nil.
+local function encode_params(params)
+    if params == nil then
+        return nil
+    end
+    local encoded = {}
+    for k, v in pairs(params) do
+        encoded[k] = url_encode(v)
+    end
+    return encoded
+end
+
 Tomba = {}
 Tomba.__index = Tomba
 
@@ -126,9 +151,9 @@ function Tomba:call(path, params)
         ["X-Tomba-Secret"] = self.secret,
     }
 
-    local response = requests.get{endpoint, params = params, headers = header, timeout = 120}
+    local response = requests.get{endpoint, params = encode_params(params), headers = header, timeout = 120}
     local json_data = response.json()
-    if response.status_code ~= 200 then
+    if response.status_code ~= 200 and response.status_code ~= 201 then
         error(response.text)
     end
 
@@ -187,13 +212,14 @@ function Tomba:_request(method, path, body, params)
         json_body = json.encode(body)
     end
 
+    local encoded = encode_params(params)
     local response
     if method == "POST" then
-        response = requests.post{endpoint, data = json_body, params = params, headers = header, timeout = 120}
+        response = requests.post{endpoint, data = json_body, params = encoded, headers = header, timeout = 120}
     elseif method == "PUT" then
-        response = requests.put{endpoint, data = json_body, params = params, headers = header, timeout = 120}
+        response = requests.put{endpoint, data = json_body, params = encoded, headers = header, timeout = 120}
     elseif method == "DELETE" then
-        response = requests.delete{endpoint, params = params, headers = header, timeout = 120}
+        response = requests.delete{endpoint, params = encoded, headers = header, timeout = 120}
     end
 
     local ok, json_data = pcall(function() return response.json() end)
